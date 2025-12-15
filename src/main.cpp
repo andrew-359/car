@@ -2,17 +2,20 @@
 #include "tech/Logger.h"
 #include <Ticker.h>
 #include "utils/EventBus.h"
-
-// Создаем экземпляры компонентов
-MotorController motorController;
-NetworkManager networkManager;
-
-// Глобальный Ticker для отложенных действий, таких как перезагрузка
-Ticker globalTicker;
-
+#include "sensors/ProximitySensor.h" // Заменяем на новый модуль
+ 
+// --- Компоненты приложения ---
+// Создаем экземпляры в этом файле. Ключевое слово 'static' ограничивает их
+// видимость только этим файлом (main.cpp), предотвращая случайное
+// использование в других частях программы.
+static MotorController motorController;
+static NetworkManager networkManager;
+static sensors::ProximitySensor proximitySensor; // Создаем экземпляр сенсора приближения
+static Ticker globalTicker;
+ 
 // Создаем единственный экземпляр нашего приложения,
 // внедряя зависимости через конструктор.
-CarApplication app(motorController, networkManager);
+static CarApplication app(motorController, networkManager, proximitySensor);
 
 void setup() {
   // Подписываемся на событие перезагрузки из глобальной шины событий.

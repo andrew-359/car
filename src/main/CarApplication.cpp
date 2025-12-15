@@ -3,9 +3,10 @@
 #include <LittleFS.h>
 #include "tech/Logger.h"
 
-CarApplication::CarApplication(MotorController& motorController, NetworkManager& networkManager)
+CarApplication::CarApplication(MotorController& motorController, NetworkManager& networkManager, sensors::ProximitySensor& proximitySensor)
     : _motorController(motorController), 
-      _networkManager(networkManager) 
+      _networkManager(networkManager),
+      _proximitySensor(proximitySensor)
 {
     // Заполняем таблицу поиска для конечного автомата
     _stateHandlers[State::IDLE] = StateHandlers {
@@ -50,6 +51,7 @@ void CarApplication::setup() {
     Logger::info("Запуск CarApplication...");
 
     _motorController.begin();
+    _proximitySensor.setup(); // Инициализируем новый модуль
 
     if (!LittleFS.begin(true)) {
         Logger::error("Произошла ошибка при монтировании LittleFS");
@@ -58,10 +60,19 @@ void CarApplication::setup() {
 
     // --- Связываем компоненты ---
     _networkManager.onControlCommand = [this](AsyncWebSocketClient* client, int throttle, int steer) {
+        //TODO сделать нормально
+        // --- Логика автотормоза ---
+        float distance = _proximitySensor.getDistanceCm();
+        if (throttle > 0 && distance < Config::Proximity::MIN_BRAKE_DISTANCE_CM) {
+            Logger::warn("Препятствие на расстоянии %.1f см! Автотормоз.", distance);
+            _motorController.setSpeed(0, steer); // Блокируем движение вперед, но разрешаем поворот на месте
+        } else {
+            _motorController.setSpeed(throttle, steer);
+        }
+
         // Последний, кто отдал команду, становится активным водителем
         _activeClientId = client->id();
         _changeState(State::DRIVING);
-        _motorController.setSpeed(throttle, steer);
         _lastCmdTime = millis(); // Сбрасываем таймер failsafe
     };
 
@@ -96,6 +107,7 @@ void CarApplication::loop() {
     }
 }
 
+//TODO не нравится этот код
 void CarApplication::_changeState(State newState) {
     if (_currentState == newState) return;
 

@@ -6,11 +6,12 @@
 #include "tech/MotorController.h"
 #include "Config.h"
 #include "network/NetworkManager.h"
+#include "sensors/ProximitySensor.h" // Заменяем на новый модуль
 
 class CarApplication {
 public:
     // Внедрение зависимостей: получаем компоненты через конструктор
-    CarApplication(MotorController& motorController, NetworkManager& networkManager);
+    CarApplication(MotorController& motorController, NetworkManager& networkManager, sensors::ProximitySensor& proximitySensor);
 
     void setup();
     void loop();
@@ -31,6 +32,7 @@ private:
     // --- Компоненты приложения ---
     MotorController& _motorController;
     NetworkManager& _networkManager;
+    sensors::ProximitySensor& _proximitySensor;
 
     // --- Состояние приложения ---
     State _currentState = State::IDLE;

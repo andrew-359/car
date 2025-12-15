@@ -7,6 +7,7 @@
 
 WebRouteManager::WebRouteManager(Preferences& preferences) : _preferences(preferences) {}
 
+//TODO refactoring??
 void WebRouteManager::registerRoutes(AsyncWebServer& server) {
     // Обработчик для сохранения настроек Wi-Fi
     server.on(Config::Web::ROUTE_WIFI_SAVE, HTTP_POST, [this](AsyncWebServerRequest *request) { _handleWifiSave(request); });
@@ -18,6 +19,7 @@ void WebRouteManager::registerRoutes(AsyncWebServer& server) {
     server.onNotFound([](AsyncWebServerRequest *request) { request->send(404, "text/plain", "Not found"); });
 }
 
+//TODO refactoring
 void WebRouteManager::_handleWifiSave(AsyncWebServerRequest *request) {
     String ssid = request->arg("ssid");
     if (ssid.length() == 0) {

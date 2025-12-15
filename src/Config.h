@@ -59,4 +59,15 @@ namespace Config {
         constexpr MotorPins LEFT_MOTOR  = { .pwm = 26, .in1 = 25, .in2 = 33, .channel = 0 };
         constexpr MotorPins RIGHT_MOTOR = { .pwm = 12, .in1 = 14, .in2 = 27, .channel = 1 };
     }
+
+    // Сенсор приближения (HC-SR04)
+    namespace Proximity {
+        // ВНИМАНИЕ: Пины 25 и 26 по умолчанию заняты мотором.
+        // Выберите другие свободные пины для сенсора.
+        constexpr int TRIG_PIN = 19; // Пин для отправки сигнала
+        constexpr int ECHO_PIN = 18; // Пин для приема эха
+
+        constexpr int SAMPLE_INTERVAL_MS = 100; // Интервал опроса сенсора в мс
+        constexpr float MIN_BRAKE_DISTANCE_CM = 20.0f; // Дистанция для срабатывания автотормоза
+    }
 }

@@ -3,6 +3,7 @@
 #include "Config.h"
 #include "tech/Logger.h"
 
+// можно было бы и тут сильнее порефакторить, но как-будто не нужно
 WebSocketHandler::WebSocketHandler() {
 
     // Заполняем нашу таблицу поиска

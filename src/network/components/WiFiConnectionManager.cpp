@@ -3,6 +3,7 @@
 #include "Config.h"
 #include "tech/Logger.h"
 
+//TODO порефакторить иф елсы?
 WiFiConnectionManager::WiFiConnectionManager(Preferences& preferences) 
     : _preferences(preferences), _state(State::IDLE), _lastAttemptTime(0) 
 {
