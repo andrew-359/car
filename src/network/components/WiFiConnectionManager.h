@@ -2,7 +2,7 @@
 
 #include <Preferences.h>
 #include <functional>
-#include <map>
+#include <array>
 
 class WiFiConnectionManager {
 public:
@@ -13,6 +13,9 @@ public:
         STARTING_AP,
         AP_MODE
     };
+
+    // Определяем количество состояний для использования в std::array
+    static constexpr size_t STATE_COUNT = 5;
 
     // Структура для хранения логики состояний
     struct StateLogic {
@@ -31,7 +34,7 @@ public:
 private:
     Preferences& _preferences;
     State _state = State::IDLE;
-    std::map<State, StateLogic> _stateLogic;
+    std::array<StateLogic, STATE_COUNT> _stateLogic;
     unsigned long _lastAttemptTime = 0;
 
     void _changeState(State newState);

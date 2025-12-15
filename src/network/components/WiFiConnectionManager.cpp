@@ -3,12 +3,11 @@
 #include "Config.h"
 #include "tech/Logger.h"
 
-//TODO порефакторить иф елсы?
 WiFiConnectionManager::WiFiConnectionManager(Preferences& preferences) 
     : _preferences(preferences), _state(State::IDLE), _lastAttemptTime(0) 
 {
     // Заполняем таблицу поиска для конечного автомата
-    _stateLogic[State::CONNECTING_STA] = {
+    _stateLogic[static_cast<size_t>(State::CONNECTING_STA)] = {
         /* onEnter */ [this]() {
             _preferences.begin(Config::Network::PREFERENCES_NAMESPACE, true);
             String ssid = _preferences.getString("ssid", "");
@@ -35,7 +34,7 @@ WiFiConnectionManager::WiFiConnectionManager(Preferences& preferences)
         }
     };
 
-    _stateLogic[State::CONNECTED_STA] = {
+    _stateLogic[static_cast<size_t>(State::CONNECTED_STA)] = {
         /* onEnter */ [this]() {
             Logger::info("Подключено! IP адрес: %s", WiFi.localIP().toString().c_str());
             if (onStaConnected) onStaConnected();
@@ -48,7 +47,7 @@ WiFiConnectionManager::WiFiConnectionManager(Preferences& preferences)
         }
     };
 
-    _stateLogic[State::STARTING_AP] = {
+    _stateLogic[static_cast<size_t>(State::STARTING_AP)] = {
         /* onEnter */ [this]() {
             Logger::info("Запуск в режиме точки доступа. Подключитесь к '%s' и перейдите на 192.168.4.1", Config::Network::WIFI_AP_SSID);
             WiFi.mode(WIFI_AP);
@@ -59,6 +58,17 @@ WiFiConnectionManager::WiFiConnectionManager(Preferences& preferences)
         },
         /* onLoop */ nullptr
     };
+
+    // Добавляем обработчики для оставшихся состояний, чтобы массив был полным
+    _stateLogic[static_cast<size_t>(State::IDLE)] = {
+        /* onEnter */ nullptr,
+        /* onLoop */ nullptr
+    };
+
+    _stateLogic[static_cast<size_t>(State::AP_MODE)] = {
+        /* onEnter */ nullptr,
+        /* onLoop */ nullptr
+    };
 }
 
 void WiFiConnectionManager::begin() {
@@ -66,7 +76,7 @@ void WiFiConnectionManager::begin() {
 }
 
 void WiFiConnectionManager::loop() {
-    if (auto& handler = _stateLogic[_state]; handler.onLoop) {
+    if (auto& handler = _stateLogic[static_cast<size_t>(_state)]; handler.onLoop) {
         handler.onLoop();
     }
 }
@@ -74,7 +84,7 @@ void WiFiConnectionManager::loop() {
 void WiFiConnectionManager::_changeState(State newState) {
     if (_state == newState) return;
     _state = newState;
-    if (auto& handler = _stateLogic[_state]; handler.onEnter) {
+    if (auto& handler = _stateLogic[static_cast<size_t>(_state)]; handler.onEnter) {
         handler.onEnter();
     }
 }
