@@ -30,13 +30,13 @@ void NetworkManager::loop() {
     _ws.cleanupClients();
 }
 
-void NetworkManager::broadcastStatus(const String& status) {
-    StaticJsonDocument<128> doc;
+void NetworkManager::broadcastStatus(const char* status) {
+    StaticJsonDocument<64> doc; // Можно уменьшить размер, т.к. value короткое
     doc["type"] = "status";
     doc["value"] = status;
-    String json;
-    serializeJson(doc, json);
-    _ws.textAll(json);
+    char buffer[64];
+    size_t len = serializeJson(doc, buffer);
+    _ws.textAll(buffer, len);
 }
 
 void NetworkManager::_setupServer() {

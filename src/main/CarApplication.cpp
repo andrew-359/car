@@ -9,7 +9,7 @@ CarApplication::CarApplication(MotorController& motorController, NetworkManager&
       _proximitySensor(proximitySensor)
 {
     // Заполняем таблицу поиска для конечного автомата
-    _stateHandlers[State::IDLE] = StateHandlers {
+    _stateHandlers[static_cast<size_t>(State::IDLE)] = StateHandlers {
         /* label */ "IDLE",
         /* onEnter */ [this]() {
             Logger::info("Вход в состояние IDLE.");
@@ -19,7 +19,7 @@ CarApplication::CarApplication(MotorController& motorController, NetworkManager&
         /* onLoop */ nullptr
     };
 
-    _stateHandlers[State::DRIVING] = StateHandlers {
+    _stateHandlers[static_cast<size_t>(State::DRIVING)] = StateHandlers {
         /* label */ "DRIVING",
         /* onEnter */ nullptr,
         /* onExit */ [this]() {
@@ -33,7 +33,7 @@ CarApplication::CarApplication(MotorController& motorController, NetworkManager&
         }
     };
 
-    _stateHandlers[State::FAILSAFE] = StateHandlers {
+    _stateHandlers[static_cast<size_t>(State::FAILSAFE)] = StateHandlers {
         /* label */ "FAILSAFE",
         /* onEnter */ [this]() {
             Logger::warn("Вход в состояние FAILSAFE. Остановка моторов.");
@@ -102,7 +102,7 @@ void CarApplication::loop() {
     _networkManager.loop(); // Даем сетевому менеджеру выполнять свои задачи
     
     // Выполняем действие onLoop для текущего состояния, если оно существует
-    if (auto& handler = _stateHandlers[_currentState]; handler.onLoop) {
+    if (auto& handler = _stateHandlers[static_cast<size_t>(_currentState)]; handler.onLoop) {
         handler.onLoop();
     }
 }
@@ -112,17 +112,17 @@ void CarApplication::_changeState(State newState) {
     if (_currentState == newState) return;
 
     // 1. Выполняем действие onExit для СТАРОГО состояния
-    if (auto& handler = _stateHandlers[_currentState]; handler.onExit) {
+    if (auto& handler = _stateHandlers[static_cast<size_t>(_currentState)]; handler.onExit) {
         handler.onExit();
     }
 
     _currentState = newState;
 
     // 2. Выполняем действие onEnter для НОВОГО состояния
-    if (auto& handler = _stateHandlers[_currentState]; handler.onEnter) {
+    if (auto& handler = _stateHandlers[static_cast<size_t>(_currentState)]; handler.onEnter) {
         handler.onEnter();
     }
 
     // 3. Оповещаем всех клиентов о смене состояния
-    _networkManager.broadcastStatus(_stateHandlers[_currentState].label);
+    _networkManager.broadcastStatus(_stateHandlers[static_cast<size_t>(_currentState)].label);
 }

@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include "Config.h"
 
+//TODO в утилс
 class Logger {
 public:
     static void begin() {

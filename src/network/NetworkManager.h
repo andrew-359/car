@@ -21,7 +21,7 @@ public:
     std::function<void(AsyncWebSocketClient* client)> onClientConnect;
 
     // Метод для трансляции сообщений всем клиентам
-    void broadcastStatus(const String& status);
+    void broadcastStatus(const char* status);
 
 private:
     AsyncWebServer _server;

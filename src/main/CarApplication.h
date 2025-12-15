@@ -19,7 +19,9 @@ public:
 private:
     // --- Конечный автомат ---
     enum class State { IDLE, DRIVING, FAILSAFE };
-
+    // Определяем количество состояний для использования в std::array
+    static constexpr size_t STATE_COUNT = 3;
+    
     struct StateHandlers {
         const char* label;             // Текстовое представление состояния
         std::function<void()> onEnter; // Действие при входе в состояние
@@ -38,5 +40,5 @@ private:
     State _currentState = State::IDLE;
     unsigned long _lastCmdTime = 0;
     uint32_t _activeClientId = 0; // ID клиента, который управляет машинкой
-    std::map<State, StateHandlers> _stateHandlers;
+    std::array<StateHandlers, STATE_COUNT> _stateHandlers;
 };
