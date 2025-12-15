@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>ESP32 Car Control</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        text-align: center;
+        background-color: #282c34;
+        color: white;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100vh;
+      }
+      h1 {
+        margin: 0;
+        padding-bottom: 10px;
+      }
+      #status {
+        margin-bottom: 20px;
+        font-size: 1.2em;
+        height: 1.5em;
+      }
+      #joystick-container {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin: 20px auto;
+        background: #444;
+        border-radius: 50%;
+        touch-action: none;
+      }
+      #joystick-handle {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        top: 60px;
+        left: 60px;
+        background: #888;
+        border: 2px solid #aaa;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      .footer {
+        position: absolute;
+        bottom: 10px;
+        width: 100%;
+        font-size: 0.9em;
+      }
+      a {
+        color: #61dafb;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ESP32 Wi-Fi Car</h1>
+    <div id="status">Connecting...</div>
+    <div id="joystick-container">
+      <div id="joystick-handle"></div>
+    </div>
+    <div class="footer">
+      <p>Use joystick/touchscreen or WASD keys.</p>
+      <a href="/wifi.html">Configure Wi-Fi</a>
+    </div>
+
+    <!-- Загружаем основной скрипт как модуль -->
+    <script src="main.js" type="module"></script>
+  </body>
+</html>
